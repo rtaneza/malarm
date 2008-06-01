@@ -1,0 +1,26 @@
+malarm is a simple maemo alarm app for Nokia N8xx devices.
+
+	http://github.com/rtaneza/malarm/tree
+
+I wrote this primarily to learn maemo / gnome programming, and because the default nokia alarm app does not have an enable/disable function (i.e. do not remove an alarm, just disable it). Some other features planned are:
+
+	- timer mode (set alarm x minutes from now)
+	- monthly and yearly recurrence (will have to add multiple alarm events)
+
+The app framework (autotool files, etc.) is based on the hhwX.c (hello hildon) sample app by Nokia.
+
+
+Installation
+============
+
+* Install the maemo 4.0.1 SDK (chinook)
+
+	http://maemo.org/development/sdks/maemo_4_chinook_sdk.html
+
+* Login to scratchbox
+
+	[sbox-CHINOOK_ARMEL] > ./configure
+	[sbox-CHINOOK_ARMEL] > ./make
+
+* TODO: how to create debian package
+

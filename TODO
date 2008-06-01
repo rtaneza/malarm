@@ -1,0 +1,13 @@
+use debug() instead of g_print
+show current time in toolbar
+add 'refresh' button
+add 'duplicate alarm' button
+revisit: repopulate tree only after another program became active, then malarm gets back the focus
+no snooze for weekly and yearly? hard to implement enable/disable
+remove unused gconf keys at startup?
+add cmd-line option to view and remove alarm (use cookie)
+icon in main view? alarm / snoozed alarm
+add timer option (input is in x minutes from now)
+use gtk_tree_model_sort_new_with_model to make columns sortable?
+add snooze length option for each alarm
+allow setting of system default snooze length

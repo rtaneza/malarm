@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Name=Maemo Alarm
+Type=Application
+Exec=@prefix@/bin/malarm
+X-Osso-Service=org.maemo.malarm
+Icon=qgn_list_gene_default_app
+GenericName[en_SG]=

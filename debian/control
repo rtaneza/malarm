@@ -1,0 +1,12 @@
+Source: malarm
+Section: user/Utilities
+Priority: extra
+Maintainer: Ronald Taneza <ronald.taneza@gmail.com>
+Build-Depends: debhelper (>= 5), libgtk2.0-dev, libhildon1-dev,
+ libhildonfm2-dev, libgconf2-dev, libosso-dev, libalarm-dev
+Standards-Version: 3.7.2
+
+Package: malarm
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: A simple maemo alarm app for Nokia N8xx devices
