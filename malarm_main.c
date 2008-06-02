@@ -63,9 +63,7 @@ int main(int argc, char **argv)
 	app.gconf = gconf_client_get_default();
 	g_assert(GCONF_IS_CLIENT(app.gconf));
 
-	build_toolbar(&app);
-	build_menu(&app);
-	build_tree(&app);
+	create_ui(&app);
 
 	g_signal_connect(G_OBJECT(app.window), "delete-event", gtk_main_quit, NULL);
 

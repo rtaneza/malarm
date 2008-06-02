@@ -46,7 +46,7 @@
 #define SNOOZE_STRING(snoozed) ((snoozed) ? "S" : " ")
 
 
-// update build_tree() when modifying this enum
+// update create_tree() when modifying this enum
 enum {
 	SNOOZE_COLUMN,
 	ENABLED_COLUMN,
@@ -461,6 +461,9 @@ static int alarm_dialog(app_data *app, cookie_t old_cookie,
 	struct tm tnow;
 	int is_old_event_disabled = 0;
 	int i;
+	GtkWidget *time_now_label;
+	char time_now_buf[100];
+	gchar *time_now_string;
 
 	g_assert(app != NULL);
 	g_assert(old_cookie >= 0);
@@ -479,6 +482,19 @@ static int alarm_dialog(app_data *app, cookie_t old_cookie,
 	size_group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	caption_size_group = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
+	// time now
+	now = time(NULL);
+	localtime_r(&now, &tnow);
+	date_to_string(&tnow, time_now_buf, 0);
+	time_now_string = g_strconcat(
+			"<span size='smaller' style='italic'>Time now: ", 
+			time_now_buf, "</span>", NULL);
+	time_now_label = gtk_label_new(NULL);
+	gtk_label_set_markup(GTK_LABEL(time_now_label), time_now_string);
+	/* gtk_size_group_add_widget(size_group, time_now_label); */
+	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(dialog)->vbox), time_now_label, FALSE, FALSE, 2);
+	g_free(time_now_string);
+	
 	// time editor
 	hbox = gtk_hbox_new(FALSE, 0);
 	time_editor = hildon_time_editor_new();
@@ -574,22 +590,18 @@ static int alarm_dialog(app_data *app, cookie_t old_cookie,
 		hildon_date_editor_set_date(HILDON_DATE_EDITOR(date_editor), 
 				tnow.tm_year+1900, tnow.tm_mon+1, tnow.tm_mday);
 
-		for (idx=ARRAY_SIZE(repeat_list)-1; idx>0; idx--) {
+		for (idx=0; idx<ARRAY_SIZE(repeat_list); idx++) {
 			if (old_event->recurrence == repeat_list[idx].val) {
+				gtk_combo_box_set_active(GTK_COMBO_BOX(repeat_combo_box), idx);
 				break;
 			}
-		}
-		if (idx >= 0) {
-			gtk_combo_box_set_active(GTK_COMBO_BOX(repeat_combo_box), idx);
 		}
 
-		for (idx=ARRAY_SIZE(sounds_list)-1; idx>0; idx--) {
+		for (idx=0; idx<ARRAY_SIZE(sounds_list); idx++) {
 			if (strcmp(old_event->sound, sounds_list[idx])==0) {
+				gtk_combo_box_set_active(GTK_COMBO_BOX(sound_combo_box), idx);
 				break;
 			}
-		}
-		if (idx >= 0) {
-			gtk_combo_box_set_active(GTK_COMBO_BOX(sound_combo_box), idx);
 		}
 
 		if (old_event->message) {
@@ -712,31 +724,6 @@ alarm_dialog_out:
 	return ret;
 }
 
-static int date_to_string(struct tm *stm, char *buf)
-{
-	static char *wday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-	static char *months[] = { 
-		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-	};
-	int off;
-	int is_pm = 0;
-
-	g_assert(stm->tm_wday >= 0 && stm->tm_wday <= 6);
-	g_assert(stm->tm_mon >= 0 && stm->tm_mon <= 11);
-
-	if (stm->tm_hour == 0) {
-		stm->tm_hour = 12;
-	} else if (stm->tm_hour > 12) {
-		stm->tm_hour = stm->tm_hour - 12;
-		is_pm = 1;
-	}
-	off = sprintf(buf, "%02d:%02d %s", stm->tm_hour, stm->tm_min, 
-			(is_pm==0) ? "AM" : "PM");
-	sprintf(buf+off, "  %s %s %d, %d", wday[stm->tm_wday], 
-			months[stm->tm_mon], stm->tm_mday, stm->tm_year+1900);
-}
-
 static int add_alarm_to_tree(app_data *app, cookie_t cookie, alarm_event_t *event)
 {
 	char *newline;
@@ -759,7 +746,7 @@ static int add_alarm_to_tree(app_data *app, cookie_t cookie, alarm_event_t *even
 	}
 
 	get_next_alarm_time(event, &stm);
-	date_to_string(&stm, buf);
+	date_to_string(&stm, buf, DATE_TO_STRING_WDAY);
 
 	for (i=0; i<ARRAY_SIZE(repeat_list); i++) {
 		if (event->recurrence == repeat_list[i].val) {
@@ -831,7 +818,7 @@ void populate_tree(app_data *app)
 	}
 }
 
-void build_tree(app_data *app)
+static void create_tree(app_data *app)
 {
 	GtkTreeStore *store;
 	GtkWidget *view;
@@ -904,7 +891,7 @@ void build_tree(app_data *app)
 	populate_tree(app);
 }
 
-void build_toolbar(app_data *app) 
+static void create_toolbar(app_data *app) 
 {
 	GtkToolbar* toolbar;
 	GtkToolItem* tb_add;
@@ -936,7 +923,7 @@ void build_toolbar(app_data *app)
 	hildon_window_add_toolbar(HILDON_WINDOW(app->window), GTK_TOOLBAR(toolbar));
 }
 
-void build_menu(app_data *app) 
+static void create_menu(app_data *app) 
 {
 	GtkWidget *main_menu;
 	GtkWidget *add_item;
@@ -968,5 +955,12 @@ void build_menu(app_data *app)
 	hildon_window_set_menu(app->window, GTK_MENU(main_menu));
 
 	gtk_widget_show_all(GTK_WIDGET(main_menu));
+}
+
+void create_ui(app_data *app)
+{
+	create_toolbar(app);
+	create_menu(app);
+	create_tree(app);
 }
 

@@ -21,10 +21,7 @@
 
 #include "malarm_main.h"
 
-void build_tree(app_data *app);
-void build_toolbar(app_data *app);
-void build_menu(app_data *app);
-
+void create_ui(app_data *app);
 void populate_tree(app_data *app);
 
 #endif /* #define _MALARM_UI_H_ */

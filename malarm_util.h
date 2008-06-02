@@ -21,6 +21,8 @@
 
 #include "malarm_main.h"
 
+#define DATE_TO_STRING_WDAY  (1 << 0)
+
 void print_alarm_event(cookie_t cookie, alarm_event_t *event);
 void print_stm(struct tm *ptm);
 void print_itm(time_t itm);
@@ -30,6 +32,7 @@ int stop_sound(app_data *app);
 
 time_t get_actual_alarm_time(app_data *app, cookie_t cookie);
 void get_next_alarm_time(alarm_event_t *event, struct tm *stm);
+void date_to_string(struct tm *stm, char *buf, int flags);
 
 char *cookie_to_gconf_key(cookie_t cookie, char *key);
 void show_banner(app_data *app, const char *text);

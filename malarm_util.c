@@ -150,6 +150,35 @@ void get_next_alarm_time(alarm_event_t *event, struct tm *stm)
 	mktime(stm);
 }
 
+void date_to_string(struct tm *stm, char *buf, int flags)
+{
+	static char *wday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+	static char *months[] = { 
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+		"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+	};
+	int off;
+	int is_pm = 0;
+
+	g_assert(stm->tm_wday >= 0 && stm->tm_wday <= 6);
+	g_assert(stm->tm_mon >= 0 && stm->tm_mon <= 11);
+
+	if (stm->tm_hour == 0) {
+		stm->tm_hour = 12;
+	} else if (stm->tm_hour > 12) {
+		stm->tm_hour = stm->tm_hour - 12;
+		is_pm = 1;
+	}
+	off = sprintf(buf, "%02d:%02d %s  ", stm->tm_hour, stm->tm_min, 
+			(is_pm==0) ? "AM" : "PM");
+	/* sprintf(buf+off, "  %s %s %d, %d", wday[stm->tm_wday],  */
+	if (flags & DATE_TO_STRING_WDAY) {
+		off += sprintf(buf+off, "%s ", wday[stm->tm_wday]);
+	}
+	sprintf(buf+off, "%s %d, %d", months[stm->tm_mon], stm->tm_mday, 
+			stm->tm_year+1900);
+}
+
 char *cookie_to_gconf_key(cookie_t cookie, char *key)
 {
 	sprintf(key, "%s%d", MALARM_GCONF_DIR, cookie);

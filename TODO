@@ -1,5 +1,3 @@
-use debug() instead of g_print
-show current time in toolbar
 add 'refresh' button
 add 'duplicate alarm' button
 revisit: repopulate tree only after another program became active, then malarm gets back the focus
@@ -11,3 +9,7 @@ add timer option (input is in x minutes from now)
 use gtk_tree_model_sort_new_with_model to make columns sortable?
 add snooze length option for each alarm
 allow setting of system default snooze length
+change app icon
+fix slight resizing of widget controls when play/stop is pressed
+stop worldclock from 'seeing' our alarms, it just checks 3 bits in flags?
+
